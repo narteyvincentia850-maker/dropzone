@@ -11,10 +11,11 @@
   <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0c0c0c; font-family: 'Manrope', sans-serif; color: #e2e8f0; }
-    img { display: block; }
-    .product-card { background: #111; border-radius: 12px; overflow: hidden; transition: transform 0.3s; }
-    .product-card:hover { transform: translateY(-8px); }
+    body { background: #0c0c0c; font-family: 'Manrope', sans-serif; color: #e2e8f0; line-height: 1.5; }
+    img { display: block; max-width: 100%; }
+    .card { background: #111; border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px #ff4d0022; }
+    button { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -25,71 +26,164 @@
     const USD_TO_GHS = 11.0;
 
     const PRODUCTS = [
-      { id:1, name:"Precision Digital Spoon Scale", price:14, category:"Kitchen & Home", images:["https://i.ibb.co/Xr022vP0/Screenshot-20260322-023642.jpg"] },
-      { id:2, name:"FlexFold 240W Cable Stand", price:9.81, category:"Accessories", images:["https://i.ibb.co/jZqrpDKH/Screenshot-20260322-024142.jpg"] },
-      { id:3, name:"TurboVac Cordless Car Vacuum", price:14.32, category:"Car & Auto", images:["https://i.ibb.co/Dgg9nHLD/Screenshot-20260323-004613-1.jpg"] },
-      { id:4, name:"Foldable Bluetooth Keyboard", price:17.43, category:"Accessories", images:["https://i.ibb.co/GvdCHYB4/Screenshot-20260322-020812-1.jpg"] },
-      { id:5, name:"MirrorCast Magnetic Selfie Screen", price:22.22, category:"Phone & Gadgets", images:["https://i.ibb.co/8gHRjvGg/Screenshot-20260323-032046.jpg"] },
-      { id:6, name:"ZapCord 240W Fast Charge Cable", price:4.72, category:"Accessories", images:["https://i.ibb.co/Xkym4Dww/Screenshot-20260322-025544.jpg"] },
-      { id:7, name:"AuroraGlow Northern Lights Lamp", price:19.98, category:"Kitchen & Home", images:["https://i.ibb.co/n8b4H20N/2403231056470324000.webp"] },
-      { id:8, name:"AirBlast 50K Handheld Blower", price:16.21, category:"Phone & Gadgets", images:["https://i.ibb.co/vCWvtN9K/Screenshot-20260322-022522.jpg"] },
-      { id:9, name:"SpinBrew Self-Stirring Mug", price:19.03, category:"Kitchen & Home", images:["https://i.ibb.co/7JS5ggpG/Screenshot-20260322-031949.jpg"] },
-      { id:10, name:"PetGroom Self-Cleaning Brush", price:15.41, category:"Kitchen & Home", images:["https://i.ibb.co/mCkvTS5Z/2407220816140329600.webp"] },
-      { id:11, name:"PocketPrint Mini Label Maker", price:12.35, category:"Phone & Gadgets", images:["https://i.ibb.co/4kNcdpp/Screenshot-20260322-033019.jpg"] },
-      { id:12, name:"LureTrap USB Mosquito Killer", price:16.13, category:"Kitchen & Home", images:["https://i.ibb.co/Gvgk3Yf3/Screenshot-20260324-170151.jpg"] },
-      { id:13, name:"SlimKeys Ultra-Thin Keyboard", price:19.75, category:"Accessories", images:["https://i.ibb.co/hxG7JYXk/Screenshot-20260323-010931.jpg"] },
-      { id:14, name:"CitrusPro Electric Juicer", price:40.98, category:"Kitchen & Home", images:["https://i.ibb.co/fdzvWMX0/Screenshot-20260323-010047.jpg"] },
-      { id:15, name:"FreshSpin Portable Blender", price:27.46, category:"Kitchen & Home", images:["https://i.ibb.co/RpPgWg0G/5d30b3f1-30e7-40e8-a970-9e4889ef2c7a.webp"] },
-      { id:16, name:"PowerSpin 500W Juicer", price:58.32, category:"Kitchen & Home", images:["https://i.ibb.co/N6g7zjNG/Screenshot-20260328-004108.jpg"] },
-      { id:17, name:"PocketBeam Mini Projector", price:12.45, category:"Phone & Gadgets", images:["https://i.ibb.co/FLMXwpMv/Screenshot-20260326-012025.jpg"] },
-      { id:18, name:"LaserMeasure Digital Distance Tool", price:11.22, category:"Phone & Gadgets", images:["https://i.ibb.co/Txm9TDv5/Screenshot-20260325-152059.jpg"] }
+      {id:1, name:"Precision Digital Spoon Scale", price:14, originalPrice:18, category:"Kitchen & Home", badge:"Sale", rating:4.7, images:["https://i.ibb.co/Xr022vP0/Screenshot-20260322-023642.jpg"]},
+      {id:2, name:"FlexFold 240W Cable Stand", price:9.81, category:"Accessories", badge:"New", rating:4.8, images:["https://i.ibb.co/jZqrpDKH/Screenshot-20260322-024142.jpg"]},
+      {id:3, name:"TurboVac Cordless Car Vacuum", price:14.32, originalPrice:19.99, category:"Car & Auto", badge:"Sale", rating:4.9, images:["https://i.ibb.co/Dgg9nHLD/Screenshot-20260323-004613-1.jpg"]},
+      {id:4, name:"Foldable Bluetooth Keyboard", price:17.43, category:"Accessories", rating:4.6, images:["https://i.ibb.co/GvdCHYB4/Screenshot-20260322-020812-1.jpg"]},
+      {id:5, name:"MirrorCast Magnetic Selfie Screen", price:22.22, originalPrice:29.99, category:"Phone & Gadgets", badge:"Sale", rating:4.7, images:["https://i.ibb.co/8gHRjvGg/Screenshot-20260323-032046.jpg"]},
+      {id:6, name:"ZapCord 240W Fast Charge Cable", price:4.72, category:"Accessories", rating:4.5, images:["https://i.ibb.co/Xkym4Dww/Screenshot-20260322-025544.jpg"]},
+      {id:7, name:"AuroraGlow Northern Lights Lamp", price:19.98, originalPrice:27, category:"Kitchen & Home", badge:"Sale", rating:4.9, images:["https://i.ibb.co/n8b4H20N/2403231056470324000.webp"]},
+      {id:8, name:"AirBlast 50K Handheld Blower", price:16.21, category:"Phone & Gadgets", badge:"New", rating:4.6, images:["https://i.ibb.co/vCWvtN9K/Screenshot-20260322-022522.jpg"]},
+      {id:9, name:"SpinBrew Self-Stirring Mug", price:19.03, category:"Kitchen & Home", rating:4.7, images:["https://i.ibb.co/7JS5ggpG/Screenshot-20260322-031949.jpg"]},
+      {id:10, name:"PetGroom Self-Cleaning Brush", price:15.41, originalPrice:21, category:"Kitchen & Home", badge:"Sale", rating:4.8, images:["https://i.ibb.co/mCkvTS5Z/2407220816140329600.webp"]},
+      {id:11, name:"PocketPrint Mini Label Maker", price:12.35, category:"Phone & Gadgets", badge:"Popular", rating:4.7, images:["https://i.ibb.co/4kNcdpp/Screenshot-20260322-033019.jpg"]},
+      {id:12, name:"LureTrap USB Mosquito Killer", price:16.13, category:"Kitchen & Home", rating:4.6, images:["https://i.ibb.co/Gvgk3Yf3/Screenshot-20260324-170151.jpg"]},
+      {id:13, name:"SlimKeys Ultra-Thin Keyboard", price:19.75, originalPrice:25, category:"Accessories", badge:"Sale", rating:4.5, images:["https://i.ibb.co/hxG7JYXk/Screenshot-20260323-010931.jpg"]},
+      {id:14, name:"CitrusPro Electric Juicer", price:40.98, category:"Kitchen & Home", badge:"Hot", rating:4.8, images:["https://i.ibb.co/fdzvWMX0/Screenshot-20260323-010047.jpg"]},
+      {id:15, name:"FreshSpin Portable Blender", price:27.46, originalPrice:35, category:"Kitchen & Home", badge:"Sale", rating:4.7, images:["https://i.ibb.co/RpPgWg0G/5d30b3f1-30e7-40e8-a970-9e4889ef2c7a.webp"]},
+      {id:16, name:"PowerSpin 500W Juicer", price:58.32, category:"Kitchen & Home", badge:"Premium", rating:4.8, images:["https://i.ibb.co/N6g7zjNG/Screenshot-20260328-004108.jpg"]},
+      {id:17, name:"PocketBeam Mini Projector", price:12.45, originalPrice:18, category:"Phone & Gadgets", badge:"Sale", rating:4.6, images:["https://i.ibb.co/FLMXwpMv/Screenshot-20260326-012025.jpg"]},
+      {id:18, name:"LaserMeasure Digital Distance Tool", price:11.22, category:"Phone & Gadgets", rating:4.7, images:["https://i.ibb.co/Txm9TDv5/Screenshot-20260325-152059.jpg"]}
     ];
 
     function App() {
-      const [cartCount, setCartCount] = React.useState(0);
+      const [cart, setCart] = React.useState([]);
       const [selected, setSelected] = React.useState(null);
+      const [cartOpen, setCartOpen] = React.useState(false);
+      const [toast, setToast] = React.useState(null);
 
-      const addToCart = (product) => {
-        setCartCount(c => c + 1);
-        alert(`Added to cart: ${product.name}`); // temporary - we'll improve later
+      const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 3000);
       };
 
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#0c0c0c', padding: '20px' } },
-        React.createElement('h1', { style: { textAlign: 'center', color: '#ff4d00', marginBottom: '30px' } }, 'DROPZONE'),
+      const addToCart = (p) => {
+        setCart(prev => [...prev, {...p, qty: 1}]);
+        showToast(`Added ${p.name} to cart`);
+      };
 
-        React.createElement('div', {
-          style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px', maxWidth: '1280px', margin: '0 auto' }
+      const total = cart.reduce((sum, item) => sum + item.price * (item.qty || 1), 0);
+
+      const handlePaystack = () => {
+        if (cart.length === 0) return;
+        const email = prompt("Enter your email for receipt:", "customer@gmail.com");
+        if (!email) return;
+
+        const handler = window.PaystackPop.setup({
+          key: PAYSTACK_KEY,
+          email: email,
+          amount: Math.round(total * USD_TO_GHS * 100),
+          currency: "GHS",
+          ref: "DROP" + Math.floor(Math.random() * 1000000000),
+          callback: () => {
+            showToast("✅ Payment successful! Thank you.");
+            setCart([]);
+            setCartOpen(false);
+          },
+          onClose: () => showToast("Payment cancelled")
+        });
+        handler.openIframe();
+      };
+
+      return React.createElement("div", {style: {minHeight: "100vh", background: "#0c0c0c"}},
+        // Header
+        React.createElement("header", {style: {background: "#111", padding: "16px", position: "sticky", top: 0, zIndex: 10}},
+          React.createElement("div", {style: {maxWidth: "1280px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center"}},
+            React.createElement("div", {style: {fontSize: "28px", fontWeight: "bold", color: "#ff4d00", cursor: "pointer"}, onClick: () => setSelected(null)}, "DROPZONE"),
+            React.createElement("button", {
+              onClick: () => setCartOpen(true),
+              style: {fontSize: "24px", background: "none", border: "none", color: "#fff"}
+            }, `🛒 (${cart.length})`)
+          )
+        ),
+
+        // Flash Banner
+        React.createElement("div", {
+          style: {background: "linear-gradient(90deg,#ff4d00,#ff6a20)", padding: "12px", textAlign: "center", color: "#fff", fontWeight: 500}
+        }, "🔥 FLASH SALE — Use DROPZONE10 for 10% off!"),
+
+        // Product Grid
+        React.createElement("div", {
+          style: {maxWidth: "1280px", margin: "30px auto", padding: "0 16px", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "24px"}
         },
-          PRODUCTS.map(product =>
-            React.createElement('div', {
-              key: product.id,
-              className: 'product-card',
-              style: { cursor: 'pointer' },
-              onClick: () => setSelected(product)
+          PRODUCTS.map(p => 
+            React.createElement("div", {
+              key: p.id,
+              className: "card",
+              style: {cursor: "pointer"},
+              onClick: () => setSelected(p)
             },
-              React.createElement('img', { src: product.images[0], style: { width: '100%', height: '200px', objectFit: 'cover' } }),
-              React.createElement('div', { style: { padding: '16px' } },
-                React.createElement('h3', { style: { fontSize: '18px', marginBottom: '8px' } }, product.name),
-                React.createElement('p', { style: { color: '#ff4d00', fontWeight: 'bold' } }, `GH₵${(product.price * 11).toFixed(2)}`),
-                React.createElement('button', {
-                  onClick: (e) => { e.stopPropagation(); addToCart(product); },
-                  style: { marginTop: '12px', width: '100%', padding: '10px', background: '#ff4d00', color: '#fff', border: 'none', borderRadius: '6px' }
-                }, 'Add to Cart')
+              React.createElement("img", {src: p.images[0], style: {width: "100%", height: "220px", objectFit: "cover"}}),
+              React.createElement("div", {style: {padding: "16px"}},
+                React.createElement("h3", {style: {fontSize: "17px", marginBottom: "8px"}}, p.name),
+                React.createElement("div", {style: {color: "#ff4d00", fontSize: "18px", fontWeight: 600}}, `GH₵${(p.price * USD_TO_GHS).toFixed(2)}`),
+                React.createElement("button", {
+                  onClick: (e) => { e.stopPropagation(); addToCart(p); },
+                  style: {marginTop: "12px", width: "100%", padding: "10px", background: "#ff4d00", color: "#fff", border: "none", borderRadius: "6px"}
+                }, "Add to Cart")
               )
             )
           )
         ),
 
-        selected && React.createElement('div', {
-          style: { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: '#111', padding: '30px', borderRadius: '12px', maxWidth: '500px', zIndex: 100 }
+        // Simple Cart Sidebar (opens on button click)
+        cartOpen && React.createElement("div", {
+          style: {position: "fixed", top: 0, right: 0, width: "380px", height: "100%", background: "#0c0c0c", borderLeft: "1px solid #222", padding: "20px", overflowY: "auto", zIndex: 100}
         },
-          React.createElement('h2', null, selected.name),
-          React.createElement('button', { onClick: () => setSelected(null) }, 'Close')
+          React.createElement("div", {style: {display: "flex", justifyContent: "space-between", marginBottom: "20px"}},
+            React.createElement("h2", null, `Cart (${cart.length})`),
+            React.createElement("button", {onClick: () => setCartOpen(false), style: {background: "none", border: "none", fontSize: "24px"}}, "✕")
+          ),
+          cart.length === 0 ? React.createElement("p", null, "Your cart is empty") :
+          React.createElement("div", null,
+            cart.map((item, i) => 
+              React.createElement("div", {key: i, style: {marginBottom: "16px", display: "flex", gap: "12px"}},
+                React.createElement("img", {src: item.images[0], style: {width: "60px", height: "60px", objectFit: "cover"}}),
+                React.createElement("div", null,
+                  React.createElement("div", null, item.name),
+                  React.createElement("div", {style: {color: "#ff4d00"}}, `GH₵${(item.price * USD_TO_GHS).toFixed(2)}`)
+                )
+              )
+            ),
+            React.createElement("div", {style: {margin: "30px 0", fontSize: "18px", fontWeight: 600}},
+              "Total: GH₵" + (total * USD_TO_GHS).toFixed(2)
+            ),
+            React.createElement("button", {
+              onClick: handlePaystack,
+              style: {width: "100%", padding: "14px", background: "#ff4d00", color: "#fff", border: "none", borderRadius: "8px", fontSize: "16px"}
+            }, "Pay with Paystack")
+          )
+        ),
+
+        // Toast
+        toast && React.createElement("div", {
+          style: {position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)", background: "#ff4d00", color: "#fff", padding: "12px 24px", borderRadius: "999px", zIndex: 200}
+        }, toast),
+
+        // Product Detail Modal
+        selected && React.createElement("div", {
+          style: {position: "fixed", inset: 0, background: "rgba(0,0,0,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 150, padding: "20px"}
+        },
+          React.createElement("div", {
+            style: {background: "#111", maxWidth: "600px", width: "100%", borderRadius: "12px", padding: "24px", position: "relative"}
+          },
+            React.createElement("button", {
+              onClick: () => setSelected(null),
+              style: {position: "absolute", top: "16px", right: "16px", background: "none", border: "none", fontSize: "24px", color: "#888"}
+            }, "✕"),
+            React.createElement("img", {src: selected.images[0], style: {width: "100%", borderRadius: "8px", marginBottom: "20px"}}),
+            React.createElement("h1", {style: {fontSize: "26px", marginBottom: "12px"}}, selected.name),
+            React.createElement("p", {style: {color: "#ff4d00", fontSize: "22px", marginBottom: "16px"}}, `GH₵${(selected.price * USD_TO_GHS).toFixed(2)}`),
+            React.createElement("button", {
+              onClick: () => addToCart(selected),
+              style: {width: "100%", padding: "14px", background: "#ff4d00", color: "#fff", border: "none", borderRadius: "8px", fontSize: "16px"}
+            }, "Add to Cart")
+          )
         )
       );
     }
 
-    ReactDOM.render(React.createElement(App), document.getElementById('root'));
+    ReactDOM.render(React.createElement(App), document.getElementById("root"));
   </script>
 </body>
 </html>
